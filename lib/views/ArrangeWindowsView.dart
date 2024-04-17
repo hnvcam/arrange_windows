@@ -47,7 +47,7 @@ class ArrangeWindowsView extends StatelessWidget {
                         children: [
                           BlocBuilder<ExecutorBloc, ExecutorState>(
                               builder: (context, state) {
-                            if (!state.isSelecting) {
+                            if (state.isSelecting) {
                               return TextButton.icon(
                                   onPressed: () => ExecutorBloc.read(context)
                                       .add(const RequestStopCapturing()),

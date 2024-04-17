@@ -161,6 +161,24 @@ main() {
             .called(1);
       });
 
+  blocTest('Arrange fullscreen window must toggleFullscreen first',
+      setUp: () {
+        when(mockNative.setWindowFrame(any, any))
+            .thenAnswer((realInvocation) => Future.value(window.rect));
+      },
+      build: () => ExecutorBloc(),
+      act: (bloc) async {
+        bloc.add(RequestSelectWindow(window.copyWith(fullScreen: true)));
+        while (bloc.state.selectedWindow == null) {
+          await Future.delayed(const Duration(milliseconds: 10));
+        }
+        bloc.add(
+            const RequestArrangeSelectedWindow(Arrangement.almostMaximize));
+      },
+      verify: (bloc) {
+        verify(mockNative.toggleFullscreen(any)).called(1);
+      });
+
   blocTest('Remove window must remove from state',
       build: () => ExecutorBloc(),
       act: (bloc) async {

@@ -198,6 +198,10 @@ class ExecutorBloc extends Bloc<ExecutorEvent, ExecutorState> {
       default:
     }
 
+    if (state.selectedWindow!.fullScreen) {
+      await Native.instance.toggleFullscreen(state.selectedWindow!);
+    }
+
     final result =
         await Native.instance.setWindowFrame(state.selectedWindow!, rect);
     if (result != null) {
