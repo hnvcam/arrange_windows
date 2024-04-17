@@ -46,7 +46,7 @@ class ExecutorBloc extends Bloc<ExecutorEvent, ExecutorState> {
       _Initializing event, Emitter<ExecutorState> emit) async {
     final screens = await Native.instance.allScreens;
     final windows = await Native.instance.getAllWindows(screens);
-    emit(ExecutorState(screens: screens, windows: windows));
+    emit(state.copyWith(screens: screens, windows: windows));
   }
 
   FutureOr<void> _loadProfileWindows(
@@ -139,22 +139,29 @@ class ExecutorBloc extends Bloc<ExecutorEvent, ExecutorState> {
         rect = visibleRect;
         break;
       case Arrangement.makeLarger:
+        final left =
+            max(visibleRect.left, state.selectedWindow!.x - resizeStep);
+        final top = max(visibleRect.top, state.selectedWindow!.y - resizeStep);
         rect = Rect.fromLTWH(
-            max(visibleRect.left, state.selectedWindow!.x - resizeStep),
-            max(visibleRect.top, state.selectedWindow!.y - resizeStep),
-            min(visibleRect.width,
+            left,
+            top,
+            min(visibleRect.width - left,
                 state.selectedWindow!.width + resizeStep * 2),
-            min(visibleRect.height,
+            min(visibleRect.height - top,
                 state.selectedWindow!.height + resizeStep * 2));
         break;
       case Arrangement.makeSmaller:
+        final width = max(100.0, state.selectedWindow!.width - resizeStep * 2);
+        final height =
+            max(100.0, state.selectedWindow!.height - resizeStep * 2);
         rect = Rect.fromLTWH(
-            max(visibleRect.left, state.selectedWindow!.x + resizeStep),
-            max(visibleRect.top, state.selectedWindow!.y + resizeStep),
-            min(visibleRect.width,
-                state.selectedWindow!.width - resizeStep * 2),
-            min(visibleRect.height,
-                state.selectedWindow!.height - resizeStep * 2));
+          min(visibleRect.left + visibleRect.width - width,
+              state.selectedWindow!.x + resizeStep),
+          min(visibleRect.top + visibleRect.height - height,
+              state.selectedWindow!.y + resizeStep),
+          width,
+          height,
+        );
         break;
       case Arrangement.leftHalf:
         rect = visibleRect.copyWith(width: visibleRect.width / 2);
@@ -262,7 +269,8 @@ class ExecutorBloc extends Bloc<ExecutorEvent, ExecutorState> {
   }
 
   FutureOr<void> _stopCapturing(
-      RequestStopCapturing event, Emitter<ExecutorState> emit) {
+      RequestStopCapturing event, Emitter<ExecutorState> emit) async {
+    await Native.instance.endSelecting();
     emit(state.copyWith(isSelecting: false));
   }
 

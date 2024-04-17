@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:arrange_windows/models/ScreenInfo.dart';
 import 'package:arrange_windows/models/WindowInfo.dart';
 import 'package:arrange_windows/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 
@@ -8,10 +11,18 @@ import 'models/AppInfo.dart';
 
 class Native {
   static const _channel = MethodChannel('com.tenolife.arrangeWindows/channel');
-  static final instance = Native._();
+  static Native _sharedInstance = Native._();
+  static Native get instance => _sharedInstance;
   final log = Logger('Native');
 
   Native._();
+
+  @visibleForTesting
+  static void testInstance(Native testInstance) {
+    assert(Platform.environment.containsKey('FLUTTER_TEST'),
+        'We must not use testInstance other than for testing!!!');
+    _sharedInstance = testInstance;
+  }
 
   Future<bool> checkPermissions() async {
     return await _channel.invokeMethod('requestPermissions');

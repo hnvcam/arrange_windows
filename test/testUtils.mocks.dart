@@ -4,11 +4,17 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i2;
-import 'dart:typed_data' as _i5;
+import 'dart:typed_data' as _i6;
+import 'dart:ui' as _i10;
 
+import 'package:arrange_windows/models/AppInfo.dart' as _i11;
+import 'package:arrange_windows/models/ScreenInfo.dart' as _i9;
+import 'package:arrange_windows/models/WindowInfo.dart' as _i8;
+import 'package:arrange_windows/Native.dart' as _i7;
 import 'package:isar/isar.dart' as _i3;
+import 'package:logging/logging.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i4;
+import 'package:mockito/src/dummies.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -86,6 +92,16 @@ class _FakeQuery_5<T> extends _i1.SmartFake implements _i3.Query<T> {
         );
 }
 
+class _FakeLogger_6 extends _i1.SmartFake implements _i4.Logger {
+  _FakeLogger_6(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [Isar].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -97,7 +113,7 @@ class MockIsar extends _i1.Mock implements _i3.Isar {
   @override
   String get name => (super.noSuchMethod(
         Invocation.getter(#name),
-        returnValue: _i4.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#name),
         ),
@@ -125,8 +141,8 @@ class MockIsar extends _i1.Mock implements _i3.Isar {
           #txn,
           [callback],
         ),
-        returnValue: _i4.ifNotNull(
-              _i4.dummyValueOrNull<T>(
+        returnValue: _i5.ifNotNull(
+              _i5.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #txn,
@@ -155,8 +171,8 @@ class MockIsar extends _i1.Mock implements _i3.Isar {
           [callback],
           {#silent: silent},
         ),
-        returnValue: _i4.ifNotNull(
-              _i4.dummyValueOrNull<T>(
+        returnValue: _i5.ifNotNull(
+              _i5.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #writeTxn,
@@ -182,7 +198,7 @@ class MockIsar extends _i1.Mock implements _i3.Isar {
           #txnSync,
           [callback],
         ),
-        returnValue: _i4.dummyValue<T>(
+        returnValue: _i5.dummyValue<T>(
           this,
           Invocation.method(
             #txnSync,
@@ -202,7 +218,7 @@ class MockIsar extends _i1.Mock implements _i3.Isar {
           [callback],
           {#silent: silent},
         ),
-        returnValue: _i4.dummyValue<T>(
+        returnValue: _i5.dummyValue<T>(
           this,
           Invocation.method(
             #writeTxnSync,
@@ -358,7 +374,7 @@ class MockIsarCollection<OBJ> extends _i1.Mock
   @override
   String get name => (super.noSuchMethod(
         Invocation.getter(#name),
-        returnValue: _i4.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#name),
         ),
@@ -692,7 +708,7 @@ class MockIsarCollection<OBJ> extends _i1.Mock
       );
 
   @override
-  _i2.Future<void> importJsonRaw(_i5.Uint8List? jsonBytes) =>
+  _i2.Future<void> importJsonRaw(_i6.Uint8List? jsonBytes) =>
       (super.noSuchMethod(
         Invocation.method(
           #importJsonRaw,
@@ -703,7 +719,7 @@ class MockIsarCollection<OBJ> extends _i1.Mock
       ) as _i2.Future<void>);
 
   @override
-  void importJsonRawSync(_i5.Uint8List? jsonBytes) => super.noSuchMethod(
+  void importJsonRawSync(_i6.Uint8List? jsonBytes) => super.noSuchMethod(
         Invocation.method(
           #importJsonRawSync,
           [jsonBytes],
@@ -1116,14 +1132,14 @@ class MockQuery<T> extends _i1.Mock implements _i3.Query<T> {
       ) as _i2.Stream<void>);
 
   @override
-  _i2.Future<R> exportJsonRaw<R>(R Function(_i5.Uint8List)? callback) =>
+  _i2.Future<R> exportJsonRaw<R>(R Function(_i6.Uint8List)? callback) =>
       (super.noSuchMethod(
         Invocation.method(
           #exportJsonRaw,
           [callback],
         ),
-        returnValue: _i4.ifNotNull(
-              _i4.dummyValueOrNull<R>(
+        returnValue: _i5.ifNotNull(
+              _i5.dummyValueOrNull<R>(
                 this,
                 Invocation.method(
                   #exportJsonRaw,
@@ -1142,13 +1158,13 @@ class MockQuery<T> extends _i1.Mock implements _i3.Query<T> {
       ) as _i2.Future<R>);
 
   @override
-  R exportJsonRawSync<R>(R Function(_i5.Uint8List)? callback) =>
+  R exportJsonRawSync<R>(R Function(_i6.Uint8List)? callback) =>
       (super.noSuchMethod(
         Invocation.method(
           #exportJsonRawSync,
           [callback],
         ),
-        returnValue: _i4.dummyValue<R>(
+        returnValue: _i5.dummyValue<R>(
           this,
           Invocation.method(
             #exportJsonRawSync,
@@ -1175,4 +1191,118 @@ class MockQuery<T> extends _i1.Mock implements _i3.Query<T> {
         ),
         returnValue: <Map<String, dynamic>>[],
       ) as List<Map<String, dynamic>>);
+}
+
+/// A class which mocks [Native].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockNative extends _i1.Mock implements _i7.Native {
+  MockNative() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i4.Logger get log => (super.noSuchMethod(
+        Invocation.getter(#log),
+        returnValue: _FakeLogger_6(
+          this,
+          Invocation.getter(#log),
+        ),
+      ) as _i4.Logger);
+
+  @override
+  _i2.Future<_i8.WindowInfo?> get currentWindow => (super.noSuchMethod(
+        Invocation.getter(#currentWindow),
+        returnValue: _i2.Future<_i8.WindowInfo?>.value(),
+      ) as _i2.Future<_i8.WindowInfo?>);
+
+  @override
+  _i2.Future<List<_i9.ScreenInfo>> get allScreens => (super.noSuchMethod(
+        Invocation.getter(#allScreens),
+        returnValue: _i2.Future<List<_i9.ScreenInfo>>.value(<_i9.ScreenInfo>[]),
+      ) as _i2.Future<List<_i9.ScreenInfo>>);
+
+  @override
+  _i2.Future<bool> checkPermissions() => (super.noSuchMethod(
+        Invocation.method(
+          #checkPermissions,
+          [],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<bool> startSelecting() => (super.noSuchMethod(
+        Invocation.method(
+          #startSelecting,
+          [],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<bool> endSelecting() => (super.noSuchMethod(
+        Invocation.method(
+          #endSelecting,
+          [],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<List<_i8.WindowInfo>> getAllWindows(
+          List<_i9.ScreenInfo>? screens) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAllWindows,
+          [screens],
+        ),
+        returnValue: _i2.Future<List<_i8.WindowInfo>>.value(<_i8.WindowInfo>[]),
+      ) as _i2.Future<List<_i8.WindowInfo>>);
+
+  @override
+  _i2.Future<_i10.Rect?> setWindowFrame(
+    _i8.WindowInfo? window,
+    _i10.Rect? rect,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setWindowFrame,
+          [
+            window,
+            rect,
+          ],
+        ),
+        returnValue: _i2.Future<_i10.Rect?>.value(),
+      ) as _i2.Future<_i10.Rect?>);
+
+  @override
+  _i2.Future<int?> launchApp(_i11.AppInfo? app) => (super.noSuchMethod(
+        Invocation.method(
+          #launchApp,
+          [app],
+        ),
+        returnValue: _i2.Future<int?>.value(),
+      ) as _i2.Future<int?>);
+
+  @override
+  _i2.Future<void> toggleFullscreen(_i8.WindowInfo? window) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #toggleFullscreen,
+          [window],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<_i8.WindowInfo?> refreshWindow(_i8.WindowInfo? windowInfo) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #refreshWindow,
+          [windowInfo],
+        ),
+        returnValue: _i2.Future<_i8.WindowInfo?>.value(),
+      ) as _i2.Future<_i8.WindowInfo?>);
 }
