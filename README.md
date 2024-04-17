@@ -1,27 +1,18 @@
-# arrange_windows
+# About this app
 
-A new Flutter project.
+Arrange Windows is a macOS app that helps you switch between different windows arrangement for specific tasks. It's designed to save you the trouble of opening and resizing windows again and again.
 
-## Getting Started
+For example, you can save your daily blog writing windows arrangement, and when you need to write a new blog post, you can quickly switch to that windows arrangement with just a few clicks. Or if you're editing a video, you can save a windows arrangement with the video editor and your notes side-by-side, and quickly switch to that arrangement when needed.
 
-This project is a starting point for a Flutter application.
+So if you find yourself often switching between different windows arrangement, give Arrange Windows a try and see if it can help you save some time!
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Screenshot
+![screenshot](screenshot.png)
+![tray](tray.jpeg)
 
 
+# Why this app is not released on AppStore
+------------------------------------------
 
-# apple script
-tell application "iTerm"
-	activate
-	delay 2
-	
-	tell application "System Events" to keystroke "f" using {command down, control down}
-	delay 2
-end tell
+Since April 2018, when Apple announced app sandbox, all release macOS app must have app sandbox. However, app sandbox prevents accessibility features. This app relies on accessibility features to retrieve information about windows and to move and resize windows. Without accessibility, the app cannot function properly. Therefore, this app cannot be released on AppStore.
+

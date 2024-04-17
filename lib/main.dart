@@ -21,7 +21,10 @@ Future<void> main() async {
   await trayManager.setIcon('assets/icon/icon.png');
 
   windowManager.waitUntilReadyToShow(
-      const WindowOptions(skipTaskbar: true, size: Size(800, 600)), () async {
+      const WindowOptions(
+          skipTaskbar: true,
+          size: Size(800, 600),
+          title: 'Arrange Windows'), () async {
     await windowManager.hide();
   });
 

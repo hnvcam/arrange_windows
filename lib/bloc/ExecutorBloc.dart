@@ -145,9 +145,9 @@ class ExecutorBloc extends Bloc<ExecutorEvent, ExecutorState> {
         rect = Rect.fromLTWH(
             left,
             top,
-            min(visibleRect.width - left,
+            min(visibleRect.width - left + visibleRect.left,
                 state.selectedWindow!.width + resizeStep * 2),
-            min(visibleRect.height - top,
+            min(visibleRect.height - top + visibleRect.top,
                 state.selectedWindow!.height + resizeStep * 2));
         break;
       case Arrangement.makeSmaller:

@@ -71,7 +71,8 @@ class _AppState extends State<App> with TrayListener {
         bodyLarge: TextStyle(color: Colors.black, fontSize: 20.0));
 
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Arrange Windows',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
         //
