@@ -1,9 +1,7 @@
-import 'dart:ffi';
 import 'dart:ui';
 
 import 'package:arrange_windows/Native.dart';
 import 'package:arrange_windows/bloc/ExecutorBloc.dart';
-import 'package:arrange_windows/bloc/ProfileBloc.dart';
 import 'package:arrange_windows/models/AppInfo.dart';
 import 'package:arrange_windows/models/Profile.dart';
 import 'package:arrange_windows/models/ScreenInfo.dart';
@@ -64,6 +62,7 @@ main() {
   late Profile profile;
 
   setUp(() {
+    reset(mockNative);
     when(mockNative.allScreens)
         .thenAnswer((_) => Future.value([screen1, screen2]));
     when(mockNative.getAllWindows(any))

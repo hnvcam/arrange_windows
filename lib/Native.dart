@@ -6,6 +6,7 @@ import 'package:arrange_windows/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'models/AppInfo.dart';
 
@@ -14,8 +15,14 @@ class Native {
   static Native _sharedInstance = Native._();
   static Native get instance => _sharedInstance;
   final log = Logger('Native');
+  String? _thisAppBundleIdentifier;
 
   Native._();
+
+  Future<String> get thisAppBundleIdentifier async {
+    _thisAppBundleIdentifier ??= (await PackageInfo.fromPlatform()).packageName;
+    return _thisAppBundleIdentifier!;
+  }
 
   @visibleForTesting
   static void testInstance(Native testInstance) {
@@ -62,7 +69,9 @@ class Native {
     for (final info in infos ?? []) {
       final Map<String, dynamic> map = (info as Map).cast();
       final window = WindowInfo.fromJson(map);
-      if (window.alpha == 0.0 || window.height < 25.0) {
+      if (window.alpha == 0.0 ||
+          window.height < 25.0 ||
+          window.bundleIdentifier == (await thisAppBundleIdentifier)) {
         continue;
       }
 

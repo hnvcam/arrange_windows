@@ -1,6 +1,7 @@
 import 'package:arrange_windows/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 
 import '../bloc/ProfileBloc.dart';
@@ -30,6 +31,7 @@ class _SettingsViewState extends State<SettingsView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Material(
       color: Colors.white,
       child: Padding(
@@ -54,11 +56,28 @@ class _SettingsViewState extends State<SettingsView> {
                       return ListView.builder(
                         itemBuilder: (context, index) {
                           final profile = state.profiles[index];
+                          final fullscreenCount = profile.apps
+                              .where((element) => element.fullScreen == true)
+                              .length;
+
                           return RadioListTile(
                             value: profile.id,
                             groupValue: _groupValue,
                             onChanged: (_) => _changeStartUpProfile(profile),
-                            title: Text(profile.name),
+                            title: Text(profile.name,
+                                style: theme.textTheme.labelMedium),
+                            subtitle: Row(
+                              children: [
+                                Text(
+                                  'Fullscreen: $fullscreenCount',
+                                  style: theme.textTheme.bodySmall,
+                                ),
+                                const Gap(16),
+                                Text(
+                                    'Windows: ${profile.apps.length - fullscreenCount}',
+                                    style: theme.textTheme.bodySmall)
+                              ],
+                            ),
                           );
                         },
                         itemCount: state.profiles.length,

@@ -18,6 +18,7 @@ main() {
   late Profile profile;
 
   setUp(() {
+    reset(mockIsar);
     when(mockIsar.isOpen).thenReturn(true);
     mockProfileCollection = MockIsarCollection<Profile>();
     when(mockIsar.profiles).thenReturn(mockProfileCollection);

@@ -1,3 +1,4 @@
+import 'package:arrange_windows/Native.dart';
 import 'package:arrange_windows/bloc/ExecutorBloc.dart';
 import 'package:arrange_windows/models/ScreenInfo.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +6,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:arrange_windows/components/ScreenWindowVisual.dart';
+import 'package:mockito/mockito.dart';
+
+import '../testUtils.mocks.dart';
 
 void main() {
+  final mockNative = MockNative();
+  Native.testInstance(mockNative);
+
   group('one screen', () {
     final screen = ScreenInfo(
       name: 'Test Screen',
@@ -24,26 +31,29 @@ void main() {
       safeRight: 0,
     );
 
+    setUp(() {
+      reset(mockNative);
+      when(mockNative.allScreens)
+          .thenAnswer((realInvocation) => Future.value([screen]));
+    });
+
     testWidgets('renders screen correctly', (WidgetTester tester) async {
+      when(mockNative.getAllWindows(any))
+          .thenAnswer((realInvocation) => Future.value([]));
+
       // default constraint always is 800x600
       await tester.pumpWidget(Directionality(
         textDirection: TextDirection.ltr,
         child: BlocProvider(
-          create: (BuildContext context) => ExecutorBloc(
-              initial: ExecutorState(screens: [screen], windows: const [])),
+          create: (BuildContext context) => ExecutorBloc(),
           child: const ScreenWindowVisual(),
         ),
       ));
+      await tester.pump(const Duration(microseconds: 100));
+
       expect(find.text('Test Screen'), findsOneWidget);
-      final screenPosition =
-          find.byType(Positioned).evaluate().where((element) {
-        final rect = (element.renderObject as RenderBox).paintBounds;
-        return rect.top == 0.0 &&
-            rect.left == 0.0 &&
-            rect.width.round() == 799 &&
-            rect.height.round() == 600;
-      }).firstOrNull;
-      expect(screenPosition, isNotNull);
+      await expectLater(find.byType(ScreenWindowVisual),
+          matchesGoldenFile('singleScreen.png'));
     });
   });
 }

@@ -114,9 +114,7 @@ class BlocDebugger implements BlocObserver {
   }
 
   @override
-  void onError(BlocBase<dynamic> bloc, Object error, StackTrace stackTrace) {
-    // TODO: implement onError
-  }
+  void onError(BlocBase<dynamic> bloc, Object error, StackTrace stackTrace) {}
 
   @override
   void onEvent(Bloc<dynamic, dynamic> bloc, Object? event) {
