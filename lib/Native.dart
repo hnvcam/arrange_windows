@@ -79,7 +79,7 @@ class Native {
     return processWindow.values.toList(growable: false);
   }
 
-  Future<WindowInfo?> setWindowFrame(WindowInfo? window, Rect rect) async {
+  Future<Rect?> setWindowFrame(WindowInfo? window, Rect rect) async {
     if (window == null) {
       return null;
     }
@@ -91,7 +91,8 @@ class Native {
     final Map<String, dynamic>? result =
         (await _channel.invokeMethod<Map>('setWindowFrame', data))?.cast();
     if (result != null) {
-      return WindowInfo.fromJson(result);
+      return Rect.fromLTWH(
+          result['x'], result['y'], result['width'], result['height']);
     }
     return null;
   }
@@ -110,5 +111,15 @@ class Native {
   Future<void> toggleFullscreen(WindowInfo window) async {
     await _channel.invokeMethod('toggleFullscreen', window.toJson());
     log.info('Attempted to toggle fullscreen of ${window.name}');
+  }
+
+  Future<WindowInfo?> refreshWindow(WindowInfo windowInfo) async {
+    final Map<String, dynamic>? result =
+        (await _channel.invokeMethod<Map>('refreshWindow', windowInfo.toJson()))
+            ?.cast();
+    if (result != null) {
+      return WindowInfo.fromJson(result);
+    }
+    return null;
   }
 }

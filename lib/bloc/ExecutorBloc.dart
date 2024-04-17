@@ -190,15 +190,21 @@ class ExecutorBloc extends Bloc<ExecutorEvent, ExecutorState> {
         break;
       default:
     }
+
     final result =
         await Native.instance.setWindowFrame(state.selectedWindow!, rect);
     if (result != null) {
-      emit(state.copyWith(
-          windows: List.of(state.windows)
-            ..removeWhere(
-                (element) => element.windowNumber == result.windowNumber)
-            ..add(result),
-          selectedWindow: result));
+      await Future.delayed(const Duration(milliseconds: 100));
+      final latestWindowInfo =
+          await Native.instance.refreshWindow(state.selectedWindow!);
+      if (latestWindowInfo != null) {
+        emit(state.copyWith(
+            windows: List.of(state.windows)
+              ..removeWhere((element) =>
+                  element.windowNumber == latestWindowInfo.windowNumber)
+              ..add(latestWindowInfo),
+            selectedWindow: latestWindowInfo));
+      }
     } else {
       log.severe('Unable to arrange selected window');
     }

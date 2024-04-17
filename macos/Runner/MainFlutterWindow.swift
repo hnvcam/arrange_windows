@@ -207,8 +207,14 @@ class MainFlutterWindow: NSWindow {
             let window = accessibility.windowElements?.first ?? accessibility
             
             window.setFrame(CGRect(x: x, y: y, width: width, height: height))
+            // because of animation when resizing, so the value here may not reflect the latest change
             let newFrame = window.frame
-            refreshWindow(call, result)
+            var data = Dictionary<String, Any>()
+            data["x"] = newFrame.origin.x
+            data["y"] = newFrame.origin.y
+            data["width"] = newFrame.width
+            data["height"] = newFrame.height
+            result(data)
             print("Application \(args["name"] ?? "Unknown") was set to \(newFrame)")
         } else {
             print("Unable to get accessibility element of \(args["name"] ?? "Unknown")")
