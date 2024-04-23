@@ -10,9 +10,10 @@ So if you find yourself often switching between different windows arrangement, g
 ![screenshot](screenshot.png)
 ![tray](tray.jpeg)
 
+# Reference
+This app was built with reference to the Swift source code of ![Rectangle](https://github.com/rxhanson/Rectangle)
 
 # Why this app is not released on AppStore
 ------------------------------------------
 
 Since April 2018, when Apple announced app sandbox, all release macOS app must have app sandbox. However, app sandbox prevents accessibility features. This app relies on accessibility features to retrieve information about windows and to move and resize windows. Without accessibility, the app cannot function properly. Therefore, this app cannot be released on AppStore.
-

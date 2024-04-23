@@ -78,6 +78,12 @@ class _SettingsViewState extends State<SettingsView> {
                                     style: theme.textTheme.bodySmall)
                               ],
                             ),
+                            secondary: IconButton(
+                                onPressed: () => _confirmDeleteProfile(profile),
+                                icon: Icon(
+                                  Icons.delete_forever,
+                                  color: theme.colorScheme.error,
+                                )),
                           );
                         },
                         itemCount: state.profiles.length,
@@ -137,5 +143,29 @@ class _SettingsViewState extends State<SettingsView> {
     setState(() {
       _launchAtLogin = isEnabled;
     });
+  }
+
+  Future<void> _confirmDeleteProfile(Profile profile) async {
+    final result = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: const Text('Delete profile'),
+              content: Text(
+                  'This action is irreversible. Are you sure you want to delete ${profile.name}?'),
+              actions: [
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () => Navigator.of(context).pop(false),
+                ),
+                TextButton(
+                  child: const Text('Yes'),
+                  onPressed: () => Navigator.of(context).pop(true),
+                )
+              ]);
+        });
+    if (result == true && mounted) {
+      ProfileBloc.read(context).add(RequestDeleteProfile(profile));
+    }
   }
 }

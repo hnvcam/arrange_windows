@@ -26,3 +26,8 @@ class RequestSetStartupProfile extends ProfileEvent {
   final Profile profile;
   const RequestSetStartupProfile(this.profile);
 }
+
+class RequestDeleteProfile extends ProfileEvent {
+  final Profile profile;
+  const RequestDeleteProfile(this.profile);
+}

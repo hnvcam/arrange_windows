@@ -132,4 +132,23 @@ main() {
         expect(launchProfile.id, 1);
         expect(launchProfile.launchAtStartup, true);
       });
+
+  blocTest('delete profile must remove it from the list',
+      setUp: () {
+        when(mockIsar.writeTxn<Null>(any))
+            .thenAnswer((_) => Future.value(null));
+        when(mockProfileCollection.delete(any))
+            .thenAnswer((_) => Future.value(true));
+        when(mockQuery.findAll()).thenAnswer((_) => Future.value([profile]));
+      },
+      build: () => ProfileBloc(),
+      act: (bloc) => bloc.add(RequestDeleteProfile(profile)),
+      verify: (bloc) async {
+        final txnCall = verify(mockIsar.writeTxn<Null>(captureAny)).captured;
+        final func = txnCall[0] as Function;
+        // simulate the inner call function
+        await func.call();
+        verify(mockProfileCollection.delete(profile.id)).called(1);
+        expect(bloc.state.profiles.length, 0);
+      });
 }
