@@ -131,7 +131,7 @@ class Native {
   Future<void> toggleFullscreen(WindowInfo window) async {
     await _channel.invokeMethod('toggleFullscreen', window.toJson());
     // delay a bit to make sure the animation is done
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 2));
     log.info('Attempted to toggle fullscreen of ${window.name}');
   }
 

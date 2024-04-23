@@ -71,7 +71,7 @@ class _CloseUnrelatedWindowsDialogState
     }
 
     if (appKeys.isEmpty) {
-      Navigator.pop(context, []);
+      Navigator.pop(context, null);
       return;
     }
 
@@ -82,7 +82,7 @@ class _CloseUnrelatedWindowsDialogState
         !appKeys.contains(element.bundleIdentifier) &&
         !appKeys.contains(element.bundleURL));
     if (_terminates.isEmpty && mounted) {
-      Navigator.pop(context, []);
+      Navigator.pop(context, null);
       return;
     }
 
