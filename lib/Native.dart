@@ -142,4 +142,9 @@ class Native {
     }
     return null;
   }
+
+  Future<void> closeAllWindows(List<WindowInfo> windows) async {
+    final data = windows.map((e) => e.processId).toList(growable: false);
+    await _channel.invokeMethod('closeAllWindows', data);
+  }
 }

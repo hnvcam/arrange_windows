@@ -58,6 +58,9 @@ class MainFlutterWindow: NSWindow {
             case "launchApp":
                 self.launchApp(call, result)
                 break
+            case "closeAllWindows":
+                self.closeAllWindows(call, result)
+                break
             default:
                 result(FlutterMethodNotImplemented)
             }
@@ -312,6 +315,16 @@ class MainFlutterWindow: NSWindow {
         } else {
             result(nil)
         }
+    }
+    
+    private func closeAllWindows(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        let args = call.arguments as! Array<Int32>;
+        for processId in args {
+            if let app = NSRunningApplication(processIdentifier: processId) {
+                app.terminate();
+            }
+        }
+        result(true)
     }
     
     static func all() -> [Window] {

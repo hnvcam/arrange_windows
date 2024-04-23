@@ -156,6 +156,11 @@ class _AppState extends State<App> with TrayListener {
                     .add(RequestLoadProfileWindows(profile)),
               )
           ])),
+      MenuItem(
+          key: 'close_all',
+          label: 'Close All',
+          onClick: (menuItem) =>
+              ExecutorBloc.read(context).add(const RequestCloseAllWindows())),
       MenuItem.separator(),
       MenuItem(key: 'exit', label: 'Exit')
     ]);

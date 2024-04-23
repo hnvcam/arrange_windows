@@ -39,3 +39,7 @@ class RequestStopCapturing extends ExecutorEvent {
 class RequestCaptureAllWindows extends ExecutorEvent {
   const RequestCaptureAllWindows();
 }
+
+class RequestCloseAllWindows extends ExecutorEvent {
+  const RequestCloseAllWindows();
+}

@@ -38,6 +38,7 @@ class ExecutorBloc extends Bloc<ExecutorEvent, ExecutorState> {
     on<RequestCaptureNewWindow>(_startCapturingNewWindow);
     on<RequestStopCapturing>(_stopCapturing);
     on<RequestCaptureAllWindows>(_captureAllWindows);
+    on<RequestCloseAllWindows>(_closeAllWindows);
 
     add(const _Initializing());
   }
@@ -285,5 +286,12 @@ class ExecutorBloc extends Bloc<ExecutorEvent, ExecutorState> {
         windows: windows,
         selectedWindow: windows.firstWhereOrNull((element) =>
             element.windowNumber == state.selectedWindow?.windowNumber)));
+  }
+
+  FutureOr<void> _closeAllWindows(
+      RequestCloseAllWindows event, Emitter<ExecutorState> emit) async {
+    // in flutter, we have rules to filter all invisible windows
+    final windows = await Native.instance.getAllWindows(state.screens);
+    await Native.instance.closeAllWindows(windows);
   }
 }
