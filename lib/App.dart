@@ -1,5 +1,7 @@
 import 'package:arrange_windows/bloc/ExecutorBloc.dart';
 import 'package:arrange_windows/bloc/ProfileBloc.dart';
+import 'package:arrange_windows/constants.dart';
+import 'package:arrange_windows/models/WindowInfo.dart';
 import 'package:arrange_windows/utils.dart';
 import 'package:arrange_windows/views/ArrangeWindowsView.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'models/Profile.dart';
+import 'views/CloseUnrelatedWindowsDialog.dart';
 import 'views/SettingsView.dart';
 
 class App extends StatefulWidget {
@@ -39,14 +42,14 @@ class _AppState extends State<App> with TrayListener {
 
   @override
   Future<void> onTrayMenuItemClick(MenuItem menuItem) async {
-    if (menuItem.key == 'arrange_windows') {
+    if (menuItem.key == trayMenuArrangeWindows) {
       setState(() {
         _showingSettings = false;
       });
       await windowManager.setResizable(true);
       await windowManager.setSize(const Size(800, 600));
       await windowManager.show();
-    } else if (menuItem.key == 'settings') {
+    } else if (menuItem.key == trayMenuSettings) {
       setState(() {
         _showingSettings = true;
       });
@@ -54,7 +57,7 @@ class _AppState extends State<App> with TrayListener {
       await windowManager.setResizable(false);
 
       await windowManager.show();
-    } else if (menuItem.key == 'exit') {
+    } else if (menuItem.key == trayMenuExit) {
       windowManager.destroy();
     }
   }
@@ -141,30 +144,47 @@ class _AppState extends State<App> with TrayListener {
   Future<void> _addTrayMenu(
       BuildContext context, List<Profile> profiles) async {
     Menu menu = Menu(items: [
-      MenuItem(key: 'arrange_windows', label: 'Arrange Windows'),
-      MenuItem(key: 'settings', label: 'Settings'),
+      MenuItem(key: trayMenuArrangeWindows, label: 'Arrange Windows'),
+      MenuItem(key: trayMenuSettings, label: 'Settings'),
       MenuItem.separator(),
       MenuItem.submenu(
-          key: 'load_profile',
+          key: trayMenuLoadProfile,
           label: 'Load profile...',
           submenu: Menu(items: [
             for (final profile in profiles)
               MenuItem(
                 key: profile.name,
                 label: profile.name,
-                onClick: (menuItem) => ExecutorBloc.read(context)
-                    .add(RequestLoadProfileWindows(profile)),
+                onClick: (menuItem) => _loadProfile(context, profile),
               )
           ])),
       MenuItem(
-          key: 'close_all',
+          key: trayMenuCloseAll,
           label: 'Close All',
           onClick: (menuItem) =>
               ExecutorBloc.read(context).add(const RequestCloseAllWindows())),
       MenuItem.separator(),
-      MenuItem(key: 'exit', label: 'Exit')
+      MenuItem(key: trayMenuExit, label: 'Exit')
     ]);
 
     await trayManager.setContextMenu(menu);
+  }
+
+  Future<void> _loadProfile(BuildContext context, Profile profile) async {
+    ExecutorBloc.read(context).add(RequestLoadProfileWindows(profile));
+
+    if (await isClosingUnrelatedWindows()) {
+      await windowManager.show();
+      if (context.mounted) {
+        final windows = await showDialog<Iterable<WindowInfo>>(
+            context: context,
+            builder: (context) =>
+                CloseUnrelatedWindowsDialog(profile: profile));
+        if (windows?.isNotEmpty == true && context.mounted) {
+          ExecutorBloc.read(context).add(RequestCloseWindows(windows!));
+        }
+      }
+      await windowManager.hide();
+    }
   }
 }

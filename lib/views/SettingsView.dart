@@ -17,6 +17,7 @@ class SettingsView extends StatefulWidget {
 class _SettingsViewState extends State<SettingsView> {
   int? _groupValue;
   bool _launchAtLogin = false;
+  bool _closeUnrelatedWindows = false;
 
   @override
   void initState() {
@@ -26,7 +27,7 @@ class _SettingsViewState extends State<SettingsView> {
         .profiles
         .firstWhereOrNull((element) => element.launchAtStartup)
         ?.id;
-    _checkLaunchAtLogin();
+    _asyncInit();
   }
 
   @override
@@ -90,7 +91,16 @@ class _SettingsViewState extends State<SettingsView> {
                       );
                     },
                   )),
-            )
+            ),
+            CheckboxListTile(
+              onChanged: _setCloseUnrelatedWindows,
+              title: const Text('Close unrelated windows when loading profile'),
+              subtitle: const Padding(
+                padding: EdgeInsets.only(left: 16.0),
+                child: Text('Display a prompt to confirm'),
+              ),
+              value: _closeUnrelatedWindows,
+            ),
           ],
         ),
       ),
@@ -138,11 +148,10 @@ class _SettingsViewState extends State<SettingsView> {
     });
   }
 
-  Future<void> _checkLaunchAtLogin() async {
-    final isEnabled = await launchAtStartup.isEnabled();
-    setState(() {
-      _launchAtLogin = isEnabled;
-    });
+  Future<void> _asyncInit() async {
+    _launchAtLogin = await launchAtStartup.isEnabled();
+    _closeUnrelatedWindows = await isClosingUnrelatedWindows();
+    setState(() {});
   }
 
   Future<void> _confirmDeleteProfile(Profile profile) async {
@@ -167,5 +176,12 @@ class _SettingsViewState extends State<SettingsView> {
     if (result == true && mounted) {
       ProfileBloc.read(context).add(RequestDeleteProfile(profile));
     }
+  }
+
+  Future<void> _setCloseUnrelatedWindows(bool? value) async {
+    await setClosingUnrelatedWindows(value ?? false);
+    setState(() {
+      _closeUnrelatedWindows = value ?? false;
+    });
   }
 }

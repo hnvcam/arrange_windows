@@ -1,11 +1,13 @@
 import 'dart:developer';
 import 'dart:ui';
 
+import 'package:arrange_windows/constants.dart';
 import 'package:arrange_windows/models/ScreenInfo.dart';
 import 'package:arrange_windows/models/WindowInfo.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 ScreenInfo findScreenContains(List<ScreenInfo> screens, WindowInfo window) {
   ScreenInfo? container;
@@ -129,4 +131,15 @@ class BlocDebugger implements BlocObserver {
     log('transits:\n\tFrom: ${transition.currentState} \n\tTo: ${transition.nextState} \n\tCaused by: ${transition.event.runtimeType}',
         name: bloc.runtimeType.toString());
   }
+}
+
+Future<bool> isClosingUnrelatedWindows() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool(prefCloseUnrelated) ?? false;
+}
+
+Future<bool> setClosingUnrelatedWindows(bool? value) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool(prefCloseUnrelated, value ?? false);
+  return value ?? false;
 }

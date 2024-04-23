@@ -39,6 +39,7 @@ class ExecutorBloc extends Bloc<ExecutorEvent, ExecutorState> {
     on<RequestStopCapturing>(_stopCapturing);
     on<RequestCaptureAllWindows>(_captureAllWindows);
     on<RequestCloseAllWindows>(_closeAllWindows);
+    on<RequestCloseWindows>(_closeWindows);
 
     add(const _Initializing());
   }
@@ -53,6 +54,7 @@ class ExecutorBloc extends Bloc<ExecutorEvent, ExecutorState> {
   FutureOr<void> _loadProfileWindows(
       RequestLoadProfileWindows event, Emitter<ExecutorState> emit) async {
     final windowMaps = await _getCurrentWindowMaps();
+
     // find missing windows to launch
     final launchWindows = event.profile.apps.where((element) =>
         !windowMaps.$1.containsKey(element.bundleIdentifier) &&
@@ -103,8 +105,12 @@ class ExecutorBloc extends Bloc<ExecutorEvent, ExecutorState> {
     log.info("Unable to set position & size for apps: $remains");
   }
 
-  Future<(Map<String, WindowInfo> bundleIdMap, Map<String, WindowInfo> pathMap)>
-      _getCurrentWindowMaps() async {
+  Future<
+      (
+        Map<String, WindowInfo> bundleIdMap,
+        Map<String, WindowInfo> pathMap,
+        List<WindowInfo> windows,
+      )> _getCurrentWindowMaps() async {
     final windows = await Native.instance.getAllWindows(state.screens);
     final bundleIdMap = <String, WindowInfo>{};
     final pathMap = <String, WindowInfo>{};
@@ -116,7 +122,7 @@ class ExecutorBloc extends Bloc<ExecutorEvent, ExecutorState> {
         pathMap[w.bundleURL!] = w;
       }
     }
-    return (bundleIdMap, pathMap);
+    return (bundleIdMap, pathMap, windows);
   }
 
   FutureOr<void> _arrangeSelectedWindow(
@@ -293,5 +299,12 @@ class ExecutorBloc extends Bloc<ExecutorEvent, ExecutorState> {
     // in flutter, we have rules to filter all invisible windows
     final windows = await Native.instance.getAllWindows(state.screens);
     await Native.instance.closeAllWindows(windows);
+  }
+
+  FutureOr<void> _closeWindows(
+      RequestCloseWindows event, Emitter<ExecutorState> emit) async {
+    if (event.windows.isNotEmpty) {
+      await Native.instance.closeAllWindows(event.windows);
+    }
   }
 }

@@ -130,6 +130,8 @@ class Native {
 
   Future<void> toggleFullscreen(WindowInfo window) async {
     await _channel.invokeMethod('toggleFullscreen', window.toJson());
+    // delay a bit to make sure the animation is done
+    await Future.delayed(const Duration(seconds: 1));
     log.info('Attempted to toggle fullscreen of ${window.name}');
   }
 
@@ -143,7 +145,7 @@ class Native {
     return null;
   }
 
-  Future<void> closeAllWindows(List<WindowInfo> windows) async {
+  Future<void> closeAllWindows(Iterable<WindowInfo> windows) async {
     final data = windows.map((e) => e.processId).toList(growable: false);
     await _channel.invokeMethod('closeAllWindows', data);
   }

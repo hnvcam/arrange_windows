@@ -43,3 +43,8 @@ class RequestCaptureAllWindows extends ExecutorEvent {
 class RequestCloseAllWindows extends ExecutorEvent {
   const RequestCloseAllWindows();
 }
+
+class RequestCloseWindows extends ExecutorEvent {
+  final Iterable<WindowInfo> windows;
+  const RequestCloseWindows(this.windows);
+}
